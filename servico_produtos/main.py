@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import requests
+
 from eventos.event_bus import EventBus
 from eventos.consumer import pagamento_recebido
 from eventos.notificacao import enviar_notificacao
@@ -11,20 +12,22 @@ event_bus = EventBus()
 producer = EventProducer(event_bus)
 
 event_bus.subscribe(
-    "produto_cadastrado",
+    "produto_criado",
     pagamento_recebido
 )
 
 event_bus.subscribe(
-    "produto_cadastrado",
+    "produto_criado",
     enviar_notificacao
 )
 
 produtos = []
 
+
 @app.get("/produtos")
 def listar_produtos():
     return produtos
+
 
 @app.post("/produtos")
 def cadastrar_produto(produto: dict):
@@ -39,10 +42,9 @@ def cadastrar_produto(produto: dict):
         }
     )
 
-    producer.publicar("produto_cadastrado", produto)
+    producer.publicar("produto_criado", produto)
 
     return {
         "mensagem": "Produto cadastrado com sucesso",
         "produto": produto
-    
     }
