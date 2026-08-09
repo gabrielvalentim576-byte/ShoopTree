@@ -15,21 +15,24 @@ O projeto é composto pelos seguintes serviços:
 - Serviço de Produtos
 - Serviço de Pagamentos
 - EventBus (simulação de eventos)
+- Consumidor de Notificação
 
 Fluxo da aplicação:
 
 Cadastro de Produto
-        │
-        ▼
+│
+▼
 Serviço de Produtos
-        │
-        ▼
-Publicação de Evento
-        │
-        ▼
+│
+├────────► Serviço de Pagamentos
+│
+▼
+Publicação do evento "produto_criado"
+│
+▼
 EventBus
-      ├────────► Pagamento
-      └────────► Notificação
+├────────► Consumidor de Pagamento
+└────────► Consumidor de Notificação
 
 ---
 
@@ -63,22 +66,25 @@ Registra um pagamento.
 
 Após o cadastro de um produto:
 
-- o serviço publica o evento;
-- o EventBus distribui o evento;
+- o produto é armazenado pelo Serviço de Produtos;
+- o Serviço de Produtos realiza a comunicação com o Serviço de Pagamentos;
+- o evento `produto_criado` é publicado;
+- o EventBus distribui o evento aos consumidores inscritos;
 - o consumidor de pagamento recebe o evento;
-- o consumidor de notificação recebe o evento.
+- o consumidor de notificação recebe o evento;
+- a notificação é enviada ao cliente.
 
 ---
 
 ## Design Pattern Utilizado
 
-Observer Pattern
+### Observer Pattern
 
 O EventBus atua como sujeito (Subject).
 
 Os consumidores de pagamento e notificação atuam como Observers.
 
-Quando um novo produto é cadastrado, todos os observadores registrados são automaticamente notificados.
+Quando um novo produto é criado e o evento `produto_criado` é publicado, todos os observadores registrados para esse evento são notificados automaticamente.
 
 ---
 
@@ -87,6 +93,7 @@ Quando um novo produto é cadastrado, todos os observadores registrados são aut
 - Python
 - FastAPI
 - Uvicorn
+- Requests
 
 ---
 
@@ -96,30 +103,3 @@ Instale as dependências:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Execute o Serviço de Produtos:
-
-```bash
-uvicorn servico_produtos.main:app --reload --port 8000
-```
-
-Execute o Serviço de Pagamentos:
-
-```bash
-uvicorn servico_pagamentos.main:app --reload --port 8001
-```
-
-Abra:
-
-```
-http://127.0.0.1:8000/docs
-```
-
-e
-
-```
-http://127.0.0.1:8001/docs
-```
-
-para testar os serviços.
