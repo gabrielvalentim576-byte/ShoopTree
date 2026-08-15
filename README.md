@@ -26,6 +26,21 @@ A prova de conceito busca demonstrar:
 
 ## Arquitetura
 
+### Estratégia de Comunicação
+
+A solução utiliza duas formas complementares de comunicação.
+
+A comunicação HTTP síncrona é utilizada pelo Serviço de Produtos para
+solicitar o registro de um pagamento no Serviço de Pagamentos.
+
+Além disso, após o cadastro do produto, o Serviço de Produtos publica o
+evento `produto_criado` no EventBus. O evento é distribuído aos consumidores
+inscritos, permitindo o processamento desacoplado de pagamento e notificação.
+
+Essa combinação foi utilizada na prova de conceito para demonstrar tanto
+comunicação síncrona entre microsserviços quanto comunicação orientada a
+eventos.
+
 A solução é composta pelos seguintes elementos:
 
 * **Serviço de Produtos**
