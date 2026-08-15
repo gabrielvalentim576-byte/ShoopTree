@@ -17,6 +17,12 @@ Adotar dois microsserviços, Serviço de Produtos e Serviço de Pagamentos, util
 Justificativa técnica
 A decisão permite demonstrar separação de responsabilidades, comunicação entre serviços, publicação/consumo de eventos e possibilidade de inclusão de novos consumidores, mantendo a implementação adequada ao escopo de uma prova de conceito.
 
+A comunicação entre o Serviço de Produtos e o Serviço de Pagamentos utiliza HTTP síncrono para demonstrar a integração direta entre os microsserviços.
+
+Após o cadastro do produto, também é publicado o evento `produto_criado` no EventBus. Esse evento é distribuído aos consumidores inscritos, incluindo os consumidores de pagamento e de notificação.
+
+Essa combinação foi adotada na prova de conceito para demonstrar os dois modelos de comunicação e a aplicação do Observer Pattern.
+
 Consequências positivas
 
 separação de responsabilidades;
